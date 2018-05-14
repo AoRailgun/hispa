@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Agent
+{% endblock %}
+
+{% block body %}
+    <div id="toolBar">
+      <p>[Nom de l'utilisateur]</p>
+      <!-- TODO: get username -->
+      <input id="newSearch" class="button actionButton" type="button" value="Nouvelle recherche" onclick="window.location.href={{ path('search') }}"/>
+      <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('authentication') }}"/>
+      <!-- TODO: logout part -->
+    </div>
+
+    <h1>[Nom de l'agent (?)]</h1>
+
+
+    <div id="tabs">
+      <ul id="horizontal_menu">
+        <li><a class="button tabButton" href="#identity">Identité</a></li>
+        <li><a class="button tabButton" href="#career">Carrière</a></li>
+        <li><a class="button tabButton" href="#paychecks">Payes</a></li>
+      </ul>
+      <div id="identity" class="tabContent">
+        <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:identite.png"/>
+      </div>
+      <div id="career" class="tabContent">
+        <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>
+      </div>
+      <div id="paychecks" class="tabContent">
+        <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:payes.png"/>
+      </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+//adds the "tabs" functionnality
+$( function() {
+  $( "#tabs" ).tabs();
+});
+
+</script>
+{% endblock %}
+
+{% block style %}
+  {{ parent() }}
+  #container {
+    width: 90%;
+    height: 90%;
+    transform: translate(-50%,-45%);
+    margin: auto;
+  }
+{% endblock %}

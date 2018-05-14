@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Authentification
+{% endblock %}
+
+{% block body %}
+
+
+
+  <h1>Logiciel d'historique des payes</h1>
+
+  <form action="{{ path('authentication') }}" method="post">Renseignez votre login et mot de passe :	<BR><BR>
+			<TABLE>
+				<TR>
+					<TD><label for="username">Login:</label></TD>
+					<TD><input class="text_input" type="text" id="username" name="_username" value="{{ last_username }}"/></TD>
+				</TR>
+        <!--this puts more space between the two fields-->
+				<TR>
+					<TD><BR>
+					</TD>
+					<TD></TD>
+				</TR>
+
+				<TR>
+					<TD><label for="password">Mot de passe:</label></TD>
+					<TD><input class="text_input"type="password" id="password" name="_password" /></TD>
+				</TR>
+
+			</TABLE><BR><BR>
+
+      {% if error %}
+          {% if error.messageKey|trans(error.messageData, 'security') == 'Invalid credentials.' %}
+            <div>Identifiants incorrects.</div>
+          {% endif %}
+      {% endif %}
+
+      <!--protection against CSRF attacks-->
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+      <button class="boutonConnexion button" type="submit">Connexion</button>
+			<!--<input class="boutonConnexion button" type="button" value="Connexion" onclick="window.location.href={{ path('search') }}"/><BR>
+        <!-- TODO: login part, change redirection (onclick) & type="button" to type="submit"-->
+	 </form>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans');
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web');
+
+html, input {
+  /*background-color: lightblue;*/
+  font-family:  "Titillium Web", "Fira Sans", "Tahoma", "Verdana", "Calibri", sans-serif;
+}
+
+body {
+  /*sets the position and scales the picture correctly*/
+  background-size: auto cover;
+  background-position: top left;
+  background-color: lightblue;
+}
+
+#container {
+  position: absolute;
+  top: 45%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: rgba(255,255,255,0.8);
+  border-radius: 15px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  animation: fadein 1s;
+}
+
+@keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+.button {
+    background-color: #3a85ff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.4s ease-in-out;
+}
+
+.button:hover {
+    background-color: #68a1ff;
+}
+
+
+.text_input {
+  border-radius: 3px;
+  border: 1px solid #00f9aa;
+}
+
+ul#horizontal_menu li{
+  display: inline-block;
+  list-style-type: none;
+  padding: 0 0.3em;
+}
+
+ul#horizontal_menu a.button, .tab_content {
+  animation: fadein 1s;
+}
+
+#toolBar {
+  text-align: right;
+  position: absolute;
+  right: 10px;
+}
