@@ -5,24 +5,33 @@
 {% endblock %}
 
 {% block body %}
+  <div id="toolBar">
+    <p>[Nom de l'utilisateur]</p>
+    <!-- TODO: get username -->
+    <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('agent') }}"/>
+    <!-- TODO: logout part -->
+  </div>
+
   <h1>Rechercher un agent</h1>
-  <form method="post" >
-			<TABLE cellspacing="10">
-				<TR>
-					<TD>Nom:</TD>
-					<TD><input class="text_input" type="text" value=""></TD>
-					<TD>Prénom:</TD>
-					<TD><input class="text_input" type="text"></TD>
-					<TD>Numéro INSEE:</TD>
-					<TD><input class="text_input" type="text"></TD>
-          <TD><input class="button" type="button" value="Rechercher" onclick="generateTable()"/></TD>
-            <!-- TODO: generate table from base, allow selection
-          change redirection (onclick) & type="button" to type="submit"-->
+  <div id="form">
+    <form method="post" >
+  			<TABLE cellspacing="10">
+  				<TR>
+  					<TD>Nom:</TD>
+  					<TD><input class="text_input" type="text" value=""></TD>
+  					<TD>Prénom:</TD>
+  					<TD><input class="text_input" type="text"></TD>
+  					<TD>Numéro INSEE:</TD>
+  					<TD><input class="text_input" type="text"></TD>
+            <TD><input class="button" type="button" value="Rechercher" onclick="generateTable()"/></TD>
+              <!-- TODO: generate table from base, allow selection
+            change redirection (onclick) & type="button" to type="submit"-->
 
 
-        </TR>
-			</TABLE>
-	</form>
+          </TR>
+  			</TABLE>
+  	</form>
+  </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -33,4 +42,14 @@
       $("#container").append('<a id="table" href="{{ path('agent')}}"> <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:trouve.png"/> </a>');
     }
   </script>
+{% endblock %}
+
+{% block style %}
+  {{ parent() }}
+  #container {
+    width: 50%;
+    transform: translate(-50%,-45%);
+    margin: auto;
+  }
+
 {% endblock %}

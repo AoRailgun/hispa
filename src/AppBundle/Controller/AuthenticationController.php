@@ -15,15 +15,32 @@ class AuthenticationController extends Controller
      */
     public function authenticationAction(Request $request, AuthenticationUtils $authenticationUtils)
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+        $isFullyAuthenticated = $this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY');
 
-        return $this->render('authentication/authentication.html.twig', array(
-            'last_username' => $lastUsername,
-            'error'         => $error,
-        ));
+        /*if ($isFullyAuthenticated) {
+           return $this->render('search/search.html.twig');
+        } else {*/
+          // get the login error if there is one
+          $error = $authenticationUtils->getLastAuthenticationError();
+
+          // last username entered by the user
+          $lastUsername = $authenticationUtils->getLastUsername();
+
+          return $this->render('authentication/authentication.html.twig', array(
+              'last_username' => $lastUsername,
+              'error'         => $error,
+          ));
+        //}
     }
+
+
+    /**
+     * @Route("/logout/", name="security_logout")
+     */
+    /*public function logoutAction()
+    {
+
+    }
+    */
 }

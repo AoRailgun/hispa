@@ -44,6 +44,7 @@ security:
               check_path: authentication
               default_target_path: search
               always_use_default_target_path: true
+
             logout_on_user_change: true
 
         secured_area:
@@ -51,6 +52,12 @@ security:
               csrf_token_generator: security.csrf.token_manager
 
             logout:
-                path:   /logout
+                path: /logout/
                 target: /
-            logout_on_user_change: true    
+
+            logout_on_user_change: true
+
+    # prevents unauthenticated from accessing pages beyond "/auth/"
+    access_control:
+        - { path: ^/authentication$, roles: IS_AUTHENTICATED_ANONYMOUSLY  }
+        - { path: ^/(search|agent), roles: IS_AUTHENTICATED_FULLY }
