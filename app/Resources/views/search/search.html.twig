@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block body %}
+
   <div id="toolBar">
     <p>[Nom de l'utilisateur]</p>
     <!-- TODO: get username -->
-    <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('agent') }}"/>
-    <!-- TODO: logout part -->
+    <!--redirects to the authentication page that logs when landing on it-->
+    <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('authentication') }}"/>
   </div>
 
   <h1>Rechercher un agent</h1>

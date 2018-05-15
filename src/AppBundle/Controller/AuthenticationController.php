@@ -16,22 +16,36 @@ class AuthenticationController extends Controller
     public function authenticationAction(Request $request, AuthenticationUtils $authenticationUtils)
     {
 
-        $isFullyAuthenticated = $this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY');
+      // "logs out" automatically when landing on the page
+      if(!isset($_SESSION))
+      {
+          session_start();
+      }
 
-        /*if ($isFullyAuthenticated) {
-           return $this->render('search/search.html.twig');
-        } else {*/
-          // get the login error if there is one
-          $error = $authenticationUtils->getLastAuthenticationError();
+      $_SESSION = array();
 
-          // last username entered by the user
-          $lastUsername = $authenticationUtils->getLastUsername();
+      if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+      }
 
-          return $this->render('authentication/authentication.html.twig', array(
-              'last_username' => $lastUsername,
-              'error'         => $error,
-          ));
-        //}
+      session_destroy();
+
+      //--------------//
+
+      // get the login error if there is one
+      $error = $authenticationUtils->getLastAuthenticationError();
+
+      // last username entered by the user
+      $lastUsername = $authenticationUtils->getLastUsername();
+
+      return $this->render('authentication/authentication.html.twig', array(
+          'last_username' => $lastUsername,
+          'error'         => $error,
+      ));
     }
 
 

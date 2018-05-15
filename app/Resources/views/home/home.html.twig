@@ -8,7 +8,7 @@
   <h1>Logiciel d'historique des payes</h1>
   <h2>Bienvenue dans l'application de l'historique des payes et carrières.</h2>
   <div class="attention_texte">
-    <p>Attention :<br>
+    <p>Attention:<br>
       <br>
       Pour le bon déroulement de la procédure, nous vous invitons à ne pas utiliser, plus d'une fois, les boutons "Précédent" et "Suivant" de votre navigateur. <br>
       <br>
@@ -20,4 +20,10 @@
   <form>
     <input class="button" type="button" value="Continuer" onclick="window.location.href={{ path('authentication') }}" />
   </form>
+
+  <br>
+
+  <div>
+    Remarque: le chargement de cette page et de la page d'authentification entraîne la déconnexion automatiquement.
+  </div>
 {% endblock %}

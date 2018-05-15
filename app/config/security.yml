@@ -57,7 +57,7 @@ security:
 
             logout_on_user_change: true
 
-    # prevents unauthenticated from accessing pages beyond "/auth/"
+    # prevents unauthenticated users from accessing pages beyond "/auth/"
     access_control:
         - { path: ^/authentication$, roles: IS_AUTHENTICATED_ANONYMOUSLY  }
         - { path: ^/(search|agent), roles: IS_AUTHENTICATED_FULLY }

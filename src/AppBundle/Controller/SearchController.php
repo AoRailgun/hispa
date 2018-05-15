@@ -14,6 +14,15 @@ class SearchController extends Controller
      */
     public function searchAction()
     {
-        return $this->render('search/search.html.twig');
+
+        /*prevents the user from reaching /search/ if they aren't coming from /auth/
+        so that someone will not be able to reach it if they type in the link
+        and the previous user didn't log out*/
+
+        if (!isset($_SERVER['HTTP_REFERER'])) {
+          return $this->redirectToRoute('authentication');
+        } else {
+          return $this->render('search/search.html.twig');
+        }
     }
 }

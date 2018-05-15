@@ -13,6 +13,14 @@ class AgentController extends Controller
      */
     public function agentAction()
     {
+      /*prevents the user from reaching /agent/ if they aren't coming from /search/
+      so that someone will not be able to reach it if they type in the link
+      and the previous user didn't log out*/
+
+      if (!isset($_SERVER['HTTP_REFERER'])) {
+        return $this->redirectToRoute('authentication');
+      } else {
         return $this->render('agent/agent.html.twig');
+      }
     }
 }
