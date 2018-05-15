@@ -68,3 +68,34 @@ ul#horizontal_menu a.button, .tab_content {
   position: absolute;
   right: 10px;
 }
+
+#careerTable {
+  transform: translate(30%, 0%);
+  border-collapse: collapse;
+}
+
+#careerTable th {
+  background-color: #609dff;
+  color: white;
+}
+
+#careerTable td, #careerTable th {
+    border: 1px solid #929caa;
+    padding: 8px;
+}
+
+#careerTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#careerTable tr:nth-child(odd) {
+  background-color: #adccff;
+}
+
+#careerTable tr:hover {
+  background-color: #ddd;
+}
+
+#careerTable td:hover {
+  background-color: #a8a8a8;
+}
