@@ -13,24 +13,13 @@ class AgentController extends Controller
      */
     public function agentAction()
     {
-      /*prevents the user from reaching /agent/ if they aren't coming from /search/
-      so that someone will not be able to reach it if they type in the link
-      and the previous user didn't log out*/
-
-      /*$entries = [];
-
-      if ($handle = opendir('.')) {
-        while (false !== ($entry = readdir($handle))) {
-          if ($entry != "." && $entry != "..") {
-              $entries = $entry;
-          }
-        }
-        closedir($handle);
-      }*/
 
       $file = file_get_contents('json/test.json');
       $jsonTest = json_decode($file, true);
 
+      /*prevents the user from reaching /agent/ if they aren't coming from /search/
+      so that someone will not be able to reach it if they type in the link
+      and the previous user didn't log out*/
 
       if (!isset($_SERVER['HTTP_REFERER'])) {
         return $this->redirectToRoute('authentication');

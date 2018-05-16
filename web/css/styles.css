@@ -70,7 +70,6 @@ ul#horizontal_menu a.button, .tab_content {
 }
 
 #careerTable {
-  transform: translate(30%, 0%);
   border-collapse: collapse;
 }
 
@@ -98,4 +97,8 @@ ul#horizontal_menu a.button, .tab_content {
 
 #careerTable td:hover {
   background-color: #a8a8a8;
+}
+
+#career {
+  display: inline-block;
 }

@@ -11,10 +11,11 @@
       <input id="newSearch" class="button actionButton" type="button" value="Nouvelle recherche" onclick="window.location.href={{ path('search') }}"/>
       <!--redirects to the authentication page that logs when landing on it-->
       <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('authentication') }}"/>
+      <iframe id="txtArea1" style="display:none"></iframe>
+      <button id="btnExport" class="button" onclick="fnExcelReport();">Export Excel</button>      
     </div>
 
     <h1>[Nom de l'agent (?)]</h1>
-
 
     <div id="tabs">
       <ul id="horizontal_menu">
@@ -22,40 +23,43 @@
         <li><a class="button tabButton" href="#career">Carrière</a></li>
         <li><a class="button tabButton" href="#paychecks">Payes</a></li>
       </ul>
+      <br>
       <div id="identity" class="tabContent">
         <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:identite.png"/>
       </div>
       <div id="career" class="tabContent">
-        <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>
-        <table id="careerTable">
-          <!--genre ça va partir en boucle imbriquée dans une boucle je sens là
-          exemple: {{ jsonTest[21322][0]['Regime'] }} renvoie "Special"
-          structure: {idAgent:[{row1key1:row1value1,row1key2:row1value2,...},
-                               {row2key1:row2value1,row2key2:row2value2,...},...
-                              ]
-                    }
-          on aura sûrement toujours un truc du genre json[id][0] vu qu'y a que la clé de la toute première valeur
-          consiste uniquement en un seul array-->
-          <tr>
-            <!--this is a test, use "id" of the selected person instead of 21322-->
-            {% for keys, values in jsonTest[21322][0] %}
-              <th>{{ keys }}</th>
-            {% endfor %}
-          </tr>
-
-          {% for i in 0..jsonTest[21322]|length-1 %}
-            <tr>
-              {% for keys, values in jsonTest[21322][i] %}
-                {% if values == "null" %}
-                  <td> </td>
-                {% else %}
-                  <td>{{ values }}</td>
-                {% endif %}
+          <!--<image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>-->
+          <table id="careerTable">
+            <!--genre ça va partir en boucle imbriquée dans une boucle je sens là
+            exemple: {{ jsonTest[21322][0]['Regime'] }} renvoie "Special"
+            structure: {idAgent:[{row1key1:row1value1,row1key2:row1value2,...},
+                                 {row2key1:row2value1,row2key2:row2value2,...},...
+                                ]
+                      }
+            on aura sûrement toujours un truc du genre json[id][0] vu qu'y a que la clé de la toute première valeur
+            consiste uniquement en un seul array-->
+            <tr id="tableHeader">
+              <!--this is a test, use "id" of the selected person instead of 21322-->
+              {% for keys, values in jsonTest[21322][0] %}
+                <th>{{ keys }}</th>
               {% endfor %}
             </tr>
-          {% endfor %}
-        </table>
 
+
+            <div id="tableRows">
+              {% for i in 0..jsonTest[21322]|length-1 %}
+                <tr>
+                  {% for keys, values in jsonTest[21322][i] %}
+                    {% if values == "null" %}
+                      <td> </td>
+                    {% else %}
+                      <td>{{ values }}</td>
+                    {% endif %}
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </div>
+        </table>
       </div>
       <div id="paychecks" class="tabContent">
         <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:payes.png"/>
@@ -75,6 +79,8 @@ $( function() {
 });
 
 </script>
+
+<script text="text/javascript" src="{{ asset('js/exportToExcel.js')}}"></script>
 {% endblock %}
 
 {% block style %}
@@ -86,6 +92,8 @@ $( function() {
     min-height: 90%;*/
     transform: translate(-50%,-45%);
     margin: auto;
+    overflow-y: auto;
+    overflow-x: auto;
   }
 
 {% endblock %}
