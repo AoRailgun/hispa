@@ -9,13 +9,18 @@ use Symfony\Component\HttpFoundation\Response;
 class AgentController extends Controller
 {
     /**
-     * @Route("agent/", name="agent")
+     * @Route("/agent/", name="agent")
      */
     public function agentAction()
     {
 
       $file = file_get_contents('json/test.json');
-      $jsonTest = json_decode($file, true);
+      $json = json_decode($file, true);
+
+      //loads a randow background
+      $images = scandir('assets');
+      $images = array_diff($images, array('.','..'));
+      $imageIndex = array_rand($images);
 
       /*prevents the user from reaching /agent/ if they aren't coming from /search/
       so that someone will not be able to reach it if they type in the link
@@ -25,7 +30,8 @@ class AgentController extends Controller
         return $this->redirectToRoute('authentication');
       } else {
         return $this->render('agent/agent.html.twig', array(
-          'jsonTest' => $jsonTest,
+          'json' => $json,
+          'image' => $images[$imageIndex],
         ));
       }
     }

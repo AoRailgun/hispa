@@ -40,8 +40,10 @@
       <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
       <button class="boutonConnexion button" type="submit">Connexion</button>
-			<!--<input class="boutonConnexion button" type="button" value="Connexion" onclick="window.location.href={{ path('search') }}"/><BR>
-        <!-- TODO: login part, change redirection (onclick) & type="button" to type="submit"-->
 	 </form>
 
+{% endblock %}
+
+{% block style %}
+  body {background-image: url({{ asset('/assets/' ~ image)}});}
 {% endblock %}

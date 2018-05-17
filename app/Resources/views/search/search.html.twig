@@ -31,7 +31,6 @@
               <!-- TODO: generate table from base, allow selection
             change redirection (onclick) & type="button" to type="submit"-->
 
-
           </TR>
   			</TABLE>
   	</form>
@@ -55,5 +54,7 @@
     transform: translate(-50%,-45%);
     margin: auto;
   }
+
+  body {background-image: url({{ asset('/assets/' ~ image)}});}
 
 {% endblock %}

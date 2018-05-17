@@ -27,3 +27,7 @@
     Remarque: le chargement de cette page et de la page d'authentification entraîne la déconnexion automatiquement.
   </div>
 {% endblock %}
+
+{% block style %}
+  body {background-image: url({{ asset('/assets/' ~ image)}});}
+{% endblock %}

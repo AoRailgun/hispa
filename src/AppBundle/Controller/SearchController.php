@@ -15,6 +15,11 @@ class SearchController extends Controller
     public function searchAction()
     {
 
+        //loads a randow background
+        $images = scandir('assets');
+        $images = array_diff($images, array('.','..'));
+        $imageIndex = array_rand($images);
+
         /*prevents the user from reaching /search/ if they aren't coming from /auth/
         so that someone will not be able to reach it if they type in the link
         and the previous user didn't log out*/
@@ -22,7 +27,9 @@ class SearchController extends Controller
         if (!isset($_SERVER['HTTP_REFERER'])) {
           return $this->redirectToRoute('authentication');
         } else {
-          return $this->render('search/search.html.twig');
+          return $this->render('search/search.html.twig', array(
+            'image' => $images[$imageIndex],
+          ));
         }
     }
 }

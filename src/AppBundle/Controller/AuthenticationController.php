@@ -36,6 +36,10 @@ class AuthenticationController extends Controller
 
       //--------------//
 
+      $images = scandir('assets');
+      $images = array_diff($images, array('.','..'));
+      $imageIndex = array_rand($images);
+
       // get the login error if there is one
       $error = $authenticationUtils->getLastAuthenticationError();
 
@@ -45,16 +49,7 @@ class AuthenticationController extends Controller
       return $this->render('authentication/authentication.html.twig', array(
           'last_username' => $lastUsername,
           'error'         => $error,
+          'image' => $images[$imageIndex],
       ));
     }
-
-
-    /**
-     * @Route("/logout/", name="security_logout")
-     */
-    /*public function logoutAction()
-    {
-
-    }
-    */
 }

@@ -33,18 +33,11 @@ class HomeController extends Controller
 
         ///////
 
-        /*scans assets directory to load backgrounds
-        scandir doesn't work:
-        interprets scandir('images') as scandir(/images,/images)*/
+        $images = scandir('assets');
+        $images = array_diff($images, array('.','..'));
+        $imageIndex = array_rand($images);
 
-        $array_files = scandir('assets');
-        return $this->render('home/home.html.twig', ['files' => $array_files]);
-        //return $this->render('home/home.html.twig');
+        return $this->render('home/home.html.twig', ['image' => $images[$imageIndex]]);
     }
-
-    public function fancy() {
-      return $this->render('home/home.html.twig');
-    }
-
 }
 ?>
