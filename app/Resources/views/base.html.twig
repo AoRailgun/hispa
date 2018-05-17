@@ -10,7 +10,7 @@
 
         <link rel="icon" type="image/x-icon" href="{{ asset('simsu.ico') }}" />
     </head>
-    <body>
+    <body {% block onload %}{% endblock %}>
       <div id="container">
         {% block body %}{% endblock %}
       </div>

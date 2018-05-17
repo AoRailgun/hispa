@@ -24,15 +24,35 @@ function fnExcelReport()
         txtArea1.document.write(tab_text);
         txtArea1.document.close();
         txtArea1.focus();
-        sa=txtArea1.document.execCommand("SaveAs",true,"Say Thanks to Sumit.xls");
+        sa=txtArea1.document.execCommand("SaveAs",true,"export.xls");
+        return (sa);
     }
     else                 //other browser not tested on IE 11
         //sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
         var link = document.createElement("a");
+        //maybe change name depending on variables idk
         link.download = "export.xls";
         link.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(tab_text);
         link.click();
-
-    //maybe remove idk
-    return (sa);
 }
+
+//puts a space before each capital letter
+function putSpaceCaps() {
+    var text;
+    var beginText;
+    var endText;
+
+    $('.table th').each(function() {
+      text = $(this).text();
+      for (i=1; i<$(this).text().length; i++) {
+        if (text[i] == text[i].toUpperCase()) {
+          beginText = text.substr(0, i);
+          endText = text.substr(i, text.length);
+          text = beginText + ' ' + endText;
+        }
+      }
+      $(this).text(text);
+    });
+}
+
+//do the tri by date with the cases à cocher and by order of the column et tout là
