@@ -1,4 +1,7 @@
-function fnExcelReport()
+//maybe do 3 exports, 1 for each tab idk
+//bah dis ça marche que pour Shrome tiens
+//prend pas en compte quand genre y a des filtres qu'on été appliqués
+function excelExport()
 {
     var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
     var textRange; var j=0;
@@ -56,3 +59,67 @@ function putSpaceCaps() {
 }
 
 //do the tri by date with the cases à cocher and by order of the column et tout là
+//see SIMILE
+
+//generates checkboxes for each year
+function dateCheckboxes() {
+  var dates = [];
+
+  $(".DateDebut, .DateFin").each(function () {
+    dates.push($(this).text().substr(6));
+  });
+
+  let uniqueDates = [...new Set(dates)];
+  uniqueDates.sort();
+
+  for (i=0; i<uniqueDates.length; i++) {
+    var checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.name = uniqueDates[i];
+    checkbox.value = uniqueDates[i];
+    checkbox.id = "cb" + uniqueDates[i];
+    //checkbox.class = ??
+
+    var label = document.createElement('label')
+    label.htmlFor = "cb" + uniqueDates[i];
+    label.appendChild(document.createTextNode(uniqueDates[i]));
+
+    $("#career").append(checkbox);
+    $("#career").append(label);
+  }
+}
+
+//sort by date
+//va peut être falloir filtrer en fonction de si on veut les datesdebut ou datesfin
+//c'est pas cooool ça marche pas quand on décoche lààààààà
+function hideRows() {
+  //var matchingLines = [];
+  var date;
+  $("input[type='checkbox']").click(function() {
+    if ($(this).checked) {
+      //refreshes
+      $("#careerTable tr:not([id ='tableHeader'])").css("display", "block");
+    } else {
+      date = $(this).next("label").html();
+      $(".DateDebut").each(function () {
+        if ($(this).text().substr(6) == date) {
+          $(this).parent().attr("class", "visibleRow");
+        }
+      });
+      $(".DateFin").each(function () {
+        if ($(this).text().substr(6) == date) {
+          $(this).parent().attr("class", "visibleRow");
+        }
+      });
+
+      //hide lines in the table that don't have the right date and are not the head line
+      $("#careerTable tr:not([class='visibleRow'], [id ='tableHeader'])").css("display", "none");
+    }
+  });
+}
+
+function init() {
+  putSpaceCaps();
+  dateCheckboxes();
+  hideRows();
+}

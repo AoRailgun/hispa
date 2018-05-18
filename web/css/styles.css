@@ -102,3 +102,7 @@ ul#horizontal_menu a.button, .tab_content {
 #career {
   display: inline-block;
 }
+
+input[type="checkbox"] {
+  background-color: red;
+}

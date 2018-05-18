@@ -9,10 +9,10 @@
       <p>[Nom de l'utilisateur]</p>
       <!-- TODO: get username -->
       <input id="newSearch" class="button actionButton" type="button" value="Nouvelle recherche" onclick="window.location.href={{ path('search') }}"/>
-      <!--redirects to the authentication page that logs when landing on it-->
+      <!--redirects to the authentication page that logs out when landing on it-->
       <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('authentication') }}"/>
       <iframe id="txtArea1" style="display:none"></iframe>
-      <button id="btnExport" class="button" onclick="fnExcelReport();">Export Excel</button>
+      <button id="btnExport" class="button" onclick="excelExport();">Export Excel</button>
     </div>
 
     <h1>[Nom de l'agent (?)]</h1>
@@ -50,7 +50,7 @@
                     {% if values == "null" %}
                       <td> </td>
                     {% else %}
-                      <td>{{ values }}</td>
+                      <td class="{{ keys }}">{{ values }}</td>
                     {% endif %}
                   {% endfor %}
                 </tr>
@@ -98,5 +98,5 @@ $( function() {
 {% endblock %}
 
 {% block onload %}
- onload="putSpaceCaps(this);"
+ onload="init();"
 {% endblock %}
