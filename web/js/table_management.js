@@ -1,3 +1,16 @@
+function copyTable() {
+
+    //removes the table in case it already exists
+    //allows export multiple times in a row
+    $("#exportTable").remove();
+    var careerTable = document.getElementById('careerTable');
+    var exportTable = careerTable.cloneNode(true);
+    exportTable.id = 'exportTable';
+    document.body.appendChild(exportTable);
+    $('#exportTable').css("display","none");
+    $("#exportTable tr:not([class='visibleRow'], [id ='tableHeader'])").remove();
+}
+
 //maybe do 3 exports, 1 for each tab idk
 //bah dis ça marche que pour Shrome tiens
 //prend pas en compte quand genre y a des filtres qu'on été appliqués
@@ -5,7 +18,21 @@ function excelExport()
 {
     var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
     var textRange; var j=0;
-    tab = document.getElementById('careerTable'); // id of table
+
+    //removes the table in case it already exists
+    //allows export multiple times in a row
+    $("#exportTable").remove();
+
+    //creates an hidden table based on the original
+    //this one will contain the filtered rows
+    var careerTable = document.getElementById('careerTable');
+    var exportTable = careerTable.cloneNode(true);
+    exportTable.id = 'exportTable';
+    document.body.appendChild(exportTable);
+    $('#exportTable').css("display","none");
+    $("#exportTable tr:not([class='visibleRow'], [id ='tableHeader'])").remove();
+
+    tab = document.getElementById('exportTable'); // id of table
 
     for(j = 0 ; j < tab.rows.length ; j++)
     {
@@ -92,13 +119,21 @@ function dateCheckboxes() {
 //sort by date
 //va peut être falloir filtrer en fonction de si on veut les datesdebut ou datesfin
 //c'est pas cooool ça marche pas quand on décoche lààààààà
+
+/*genre là faut pouvoir faire en sorte de faire réapparaître les trucs quand ça se décoche
+et aussi de pouvoir appliquer plusieurs filtres
+genre quand y a deux cases de cochées ça affiche les résultats correspondant
+mais genre ça a l'air chaud déjà je galère pas mal là
+va falloir stocker les label de toutes les cases cochée
+puis parcourir l'array de labels pour voir si y a pas des lignes qui correspondent*/
 function hideRows() {
   //var matchingLines = [];
   var date;
+  //vérifier plûtot si cochée où pas peut-être jsp
   $("input[type='checkbox']").click(function() {
     if ($(this).checked) {
       //refreshes
-      $("#careerTable tr:not([id ='tableHeader'])").css("display", "block");
+      $(".invisibleRow").attr("style", " ");
     } else {
       date = $(this).next("label").html();
       $(".DateDebut").each(function () {
@@ -113,10 +148,12 @@ function hideRows() {
       });
 
       //hide lines in the table that don't have the right date and are not the head line
-      $("#careerTable tr:not([class='visibleRow'], [id ='tableHeader'])").css("display", "none");
+      $("#careerTable tr:not([class='visibleRow'], [id ='tableHeader'])").attr("class", "invisibleRow");
+      $(".invisibleRow").css("display", "none");
     }
   });
 }
+
 
 function init() {
   putSpaceCaps();
