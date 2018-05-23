@@ -29,6 +29,7 @@
       </div>
       <div id="career" class="tabContent">
           <!--<image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>-->
+          <p>Cliquez sur les noms des colonnes pour les trier</p>
           <table id="careerTable" class="table">
             <!--example: {{ json[21322][0]['Regime'] }} returns "Special"
             structure: {idAgent:[{row1key1:row1value1,row1key2:row1value2,...},
@@ -38,24 +39,21 @@
             <tr id="tableHeader">
               <!--this is a test, use "id" of the selected person instead of 21322-->
               {% for keys, values in json[21322][0] %}
-                <th>{{ keys }}</th>
+                <th id="{{ keys }}" onclick="sort(this);">{{ keys }}</th>
               {% endfor %}
             </tr>
 
-
-            <div id="tableRows">
-              {% for i in 0..json[21322]|length-1 %}
-                <tr>
-                  {% for keys, values in json[21322][i] %}
-                    {% if values == "null" %}
-                      <td> </td>
-                    {% else %}
-                      <td class="{{ keys }}">{{ values }}</td>
-                    {% endif %}
-                  {% endfor %}
-                </tr>
+            {% for i in 0..json[21322]|length-1 %}
+              <tr id="cl{{i}}"> <!--career c + letter L + number-->
+                {% for keys, values in json[21322][i] %}
+                  {% if values == "null" %}
+                    <td> </td>
+                  {% else %}
+                    <td class="{{ keys }}">{{ values }}</td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
               {% endfor %}
-            </div>
         </table>
       </div>
       <div id="paychecks" class="tabContent">
@@ -77,7 +75,9 @@ $( function() {
 
 </script>
 
+<!--<script text="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>-->
 <script text="text/javascript" src="{{ asset('js/table_management.js')}}"></script>
+
 {% endblock %}
 
 {% block style %}
@@ -93,7 +93,9 @@ $( function() {
     overflow-x: auto;
   }
 
-  body {background-image: url({{ asset('/assets/' ~ image)}});}
+  body {background-image: url({{ asset('/assets/bgs/' ~ image)}});}
+
+  <!--<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">-->
 
 {% endblock %}
 

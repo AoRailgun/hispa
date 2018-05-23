@@ -17,8 +17,8 @@ class AgentController extends Controller
       $file = file_get_contents('json/test.json');
       $json = json_decode($file, true);
 
-      //loads a randow background
-      $images = scandir('assets');
+      //loads a random background
+      $images = scandir('assets/bgs');
       $images = array_diff($images, array('.','..'));
       $imageIndex = array_rand($images);
 

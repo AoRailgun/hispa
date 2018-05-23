@@ -33,7 +33,8 @@ class HomeController extends Controller
 
         ///////
 
-        $images = scandir('assets');
+        //loads a random background
+        $images = scandir('assets/bgs');
         $images = array_diff($images, array('.','..'));
         $imageIndex = array_rand($images);
 

@@ -79,6 +79,8 @@ function putSpaceCaps() {
           beginText = text.substr(0, i);
           endText = text.substr(i, text.length);
           text = beginText + ' ' + endText;
+          //prevents from putting as much spaces as the number of charcters in the second part
+          break;
         }
       }
       $(this).text(text);
@@ -119,7 +121,7 @@ function dateCheckboxes() {
 //sort by date
 //va peut être falloir filtrer en fonction de si on veut les datesdebut ou datesfin
 //c'est pas cooool ça marche pas quand on décoche lààààààà
-
+// TODO:
 /*genre là faut pouvoir faire en sorte de faire réapparaître les trucs quand ça se décoche
 et aussi de pouvoir appliquer plusieurs filtres
 genre quand y a deux cases de cochées ça affiche les résultats correspondant
@@ -155,8 +157,95 @@ function hideRows() {
 }
 
 
+// TODO: 
+//sort depending on the clicked column
+//bon genre là c'est un peu galère je pense que je suis pas super loin
+//mais quand même c'est pas cool
+function sort(cell) {
+  /*genre on vérifie les valeurs de toutes les cellules qu'ont la même classe
+  si la cellule suivante est supérieure à la cellule précédente
+    toute la ligne passe en prepend ce genre de bordel*/
+  //peut être genre stoker le tableau d'origine dans un global pour quand on veut remettre tout comme avant
+  var cellClass;
+
+  if ($(cell).text().split(' ')[1] !== undefined) {
+    cellClass = $(cell).text().split(' ')[0] + $(cell).text().split(' ')[1];
+  } else {
+    cellClass = $(cell).text().split(' ')[0];
+  }
+
+  $("." + cellClass).each(function() {
+    /*if ($(this).parent().next().children("." + cellClass).text() > $(this).text()) {
+      $(this).parent().next()
+    }*/
+    if ($(this).text().localeCompare($(this).parent().first().text())) {
+      $(this).parent().parent().prepend($(this).parent());
+    }
+  });
+}
+
+//ça c'est l'exemple de w3school ça ressemble à un triboulopt je veux pas niq
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("myTable2");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+
+
 function init() {
   putSpaceCaps();
   dateCheckboxes();
   hideRows();
+  /*$(document).ready( function () {
+    $('#careerTable').dataTable();
+  } );*/
 }
