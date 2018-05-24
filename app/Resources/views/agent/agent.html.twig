@@ -37,9 +37,11 @@
                                 ]
                       }-->
             <tr id="tableHeader">
+              {% set numCol = 0 %}
               <!--this is a test, use "id" of the selected person instead of 21322-->
               {% for keys, values in json[21322][0] %}
-                <th id="{{ keys }}" onclick="sort(this);">{{ keys }}</th>
+                <th id="{{ keys }}" onclick="sortTable({{ numCol }});">{{ keys }}</th>
+                {% set numCol = numCol + 1 %}
               {% endfor %}
             </tr>
 

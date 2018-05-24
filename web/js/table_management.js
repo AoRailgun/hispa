@@ -156,38 +156,9 @@ function hideRows() {
   });
 }
 
-
-// TODO: 
-//sort depending on the clicked column
-//bon genre là c'est un peu galère je pense que je suis pas super loin
-//mais quand même c'est pas cool
-function sort(cell) {
-  /*genre on vérifie les valeurs de toutes les cellules qu'ont la même classe
-  si la cellule suivante est supérieure à la cellule précédente
-    toute la ligne passe en prepend ce genre de bordel*/
-  //peut être genre stoker le tableau d'origine dans un global pour quand on veut remettre tout comme avant
-  var cellClass;
-
-  if ($(cell).text().split(' ')[1] !== undefined) {
-    cellClass = $(cell).text().split(' ')[0] + $(cell).text().split(' ')[1];
-  } else {
-    cellClass = $(cell).text().split(' ')[0];
-  }
-
-  $("." + cellClass).each(function() {
-    /*if ($(this).parent().next().children("." + cellClass).text() > $(this).text()) {
-      $(this).parent().next()
-    }*/
-    if ($(this).text().localeCompare($(this).parent().first().text())) {
-      $(this).parent().parent().prepend($(this).parent());
-    }
-  });
-}
-
-//ça c'est l'exemple de w3school ça ressemble à un triboulopt je veux pas niq
 function sortTable(n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable2");
+  var table, rows, switching, i, x, j, y, shouldSwitch, dir, switchcount = 0, day, month, year;
+  table = document.querySelector("#careerTable:not(.invisibleRow)");
   switching = true;
   // Set the sorting direction to ascending:
   dir = "asc";
@@ -196,7 +167,7 @@ function sortTable(n) {
   while (switching) {
     // Start by saying: no switching is done:
     switching = false;
-    rows = table.getElementsByTagName("TR");
+    rows = table.getElementsByTagName("tr");
     /* Loop through all table rows (except the
     first, which contains table headers): */
     for (i = 1; i < (rows.length - 1); i++) {
@@ -204,23 +175,38 @@ function sortTable(n) {
       shouldSwitch = false;
       /* Get the two elements you want to compare,
       one from current row and one from the next: */
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
+      x = rows[i].getElementsByTagName("td")[n];
+      //gets the next row that doesn't have "invisibleRow" as a class
+      //bah oups ça fait des boucles infinies ça dis
+      // TODO:
+      /*j = 1;
+      while (rows[i + j].classList.contains('invisibleRow')) {
+        console.log("bien");
+        j++;
+      }
+      y = rows[i + j].getElementsByTagName("td")[n];*/
+      y = rows[i + 1].getElementsByTagName("td")[n];
+
+      //sorts visible rows only -> takes less time
+      //if (!($(x).parent().hasClass('invisibleRow'))) {
+        if (dir == "asc") {
+          // TODO: sort dates y > m > d
+          if ($(x).html().toLowerCase() > $(y).html().toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+      //}
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
+
     }
     if (shouldSwitch) {
       /* If a switch has been marked, make the switch
