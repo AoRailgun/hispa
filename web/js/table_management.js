@@ -156,9 +156,16 @@ function hideRows() {
   });
 }
 
+//string to DD/MM/YYYY date
+function sToDDMMYYYY(dateString) {
+  var dateParts = dateString.split("/");
+  var dateObject = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // month is 0-based
+  return dateObject;
+}
+
 function sortTable(n) {
-  var table, rows, switching, i, x, j, y, shouldSwitch, dir, switchcount = 0, day, month, year;
-  table = document.querySelector("#careerTable:not(.invisibleRow)");
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0, compX, compY;
+  table = document.querySelector("#careerTable");
   switching = true;
   // Set the sorting direction to ascending:
   dir = "asc";
@@ -176,34 +183,31 @@ function sortTable(n) {
       /* Get the two elements you want to compare,
       one from current row and one from the next: */
       x = rows[i].getElementsByTagName("td")[n];
-      //gets the next row that doesn't have "invisibleRow" as a class
-      //bah oups ça fait des boucles infinies ça dis
-      // TODO:
-      /*j = 1;
-      while (rows[i + j].classList.contains('invisibleRow')) {
-        console.log("bien");
-        j++;
-      }
-      y = rows[i + j].getElementsByTagName("td")[n];*/
       y = rows[i + 1].getElementsByTagName("td")[n];
 
-      //sorts visible rows only -> takes less time
-      //if (!($(x).parent().hasClass('invisibleRow'))) {
-        if (dir == "asc") {
-          // TODO: sort dates y > m > d
-          if ($(x).html().toLowerCase() > $(y).html().toLowerCase()) {
-            // If so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-          }
-        } else if (dir == "desc") {
-          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-            // If so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-          }
+      //checks if it's a date or not
+      if (($(x).html()[2]=='/') && ($(x).html()[5]=='/')) {
+        compX = sToDDMMYYYY($(x).html());
+        compY = sToDDMMYYYY($(y).html());
+      } else {
+        compX = $(x).html().toLowerCase()
+        compY = $(y).html().toLowerCase()
+      }
+
+      if (dir == "asc") {
+        // TODO: sort dates y > m > d
+        if (compX > compY) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
         }
-      //}
+      } else if (dir == "desc") {
+        if (compX < compY) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
 
@@ -227,11 +231,9 @@ function sortTable(n) {
 }
 
 
+
 function init() {
   putSpaceCaps();
   dateCheckboxes();
   hideRows();
-  /*$(document).ready( function () {
-    $('#careerTable').dataTable();
-  } );*/
 }
