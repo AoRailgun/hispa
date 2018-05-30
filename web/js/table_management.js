@@ -1,19 +1,8 @@
-function copyTable() {
-
-    //removes the table in case it already exists
-    //allows export multiple times in a row
-    $("#exportTable").remove();
-    var careerTable = document.getElementById('careerTable');
-    var exportTable = careerTable.cloneNode(true);
-    exportTable.id = 'exportTable';
-    document.body.appendChild(exportTable);
-    $('#exportTable').css("display","none");
-    $("#exportTable tr:not([class='visibleRow'], [id ='tableHeader'])").remove();
-}
+var checkedDates = []
 
 //maybe do 3 exports, 1 for each tab idk
 //bah dis ça marche que pour Shrome tiens
-//prend pas en compte quand genre y a des filtres qu'on été appliqués
+//oh non ça chope plus les lignes filtrées
 function excelExport()
 {
     var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
@@ -91,6 +80,7 @@ function putSpaceCaps() {
 //see SIMILE
 
 //generates checkboxes for each year
+//va ptetre falloir changer pour quand y aura l'onglet des payes et tout là
 function dateCheckboxes() {
   var dates = [];
 
@@ -107,14 +97,16 @@ function dateCheckboxes() {
     checkbox.name = uniqueDates[i];
     checkbox.value = uniqueDates[i];
     checkbox.id = "cb" + uniqueDates[i];
-    //checkbox.class = ??
+    $(checkbox).attr("onclick", "hideRows()");
+    $(checkbox).attr('class','checkbox');
+    $(checkbox).attr('name', 'filterStatus');
 
     var label = document.createElement('label')
     label.htmlFor = "cb" + uniqueDates[i];
     label.appendChild(document.createTextNode(uniqueDates[i]));
 
-    $("#career").append(checkbox);
-    $("#career").append(label);
+    $("#dateCheckboxes").append(checkbox);
+    $("#dateCheckboxes").append(label);
   }
 }
 
@@ -128,14 +120,90 @@ genre quand y a deux cases de cochées ça affiche les résultats correspondant
 mais genre ça a l'air chaud déjà je galère pas mal là
 va falloir stocker les label de toutes les cases cochée
 puis parcourir l'array de labels pour voir si y a pas des lignes qui correspondent*/
+//ou ptetre faut faire deux fonctions séparées selon le cas jsp
 function hideRows() {
+  /*if (case cochée) {
+    ajouter la date au tableau de dates cochées
+  } else { //case décochée
+    rendre toutes les lignes qui contiennent la date invisible
+    retirer la date du dit tableau
+  }
+
+  if (tableau pas vide) {
+    for (chaque date du tableau) {
+      si la ligne contient la date à index i elle apparait
+    }
+  } else {
+    toutes les lignes sont visibles
+  }*/
+
+  /*var date;
+  $(".checkbox").click(function() {
+    date = $(this).next("label").html();
+    if ($(this).is(':checked')) {
+      checkedDates.push(date);
+    } else {
+      $(".DateDebut, .DateFin").each(function () {
+        if ($(this).text().substr(6) == date) {
+          $(this)
+        }
+        for (var i = 0; i < checkedDates.length; i++) {
+          if (checkedDates[i] == $(this).text().substr(6)) {
+            checkedDates.splice(i,1);
+          }
+        }
+      });
+    }
+
+    if
+  });*/
+  $('#careerTable tr').each(function() {
+    $(this).removeAttr('class');
+  });
+
+  $("input[name='filterStatus']").change(function () {
+    var dates = [];
+
+    $("input[name='filterStatus']").each(function () {
+        if ($(this).is(":checked")) { dates.push($(this).next("label").html()); }
+    });
+
+    if (dates == "") { // if no filters selected, show all items
+        $("#careerTable tbody tr").show();
+    } else { // otherwise, hide everything...
+        $("#careerTable tbody tr").hide();
+
+        $("#careerTable tr:not([id='tableHeader'])").each(function () {
+            var show = false;
+            $(this).removeAttr('class');
+            var row = $(this);
+            if (!($(row).attr('id')=='tableHeader')) {
+              dates.forEach(function (date) {
+                  if (($(row).find('.DateFin').html().substr(6) == date) || ($(row).find('.DateDebut').html().substr(6) == date)) {
+                     show = true;
+                  } else {
+                    $(row).attr('class', 'invisibleRow');
+                  }
+              });
+            }
+            if (show) {
+               row.show();
+               $(row).attr('class','visibleRow');
+            }
+        });
+        $('#tableHeader').show();
+    }
+});
+
+
+//ça ça "marche"
   //var matchingLines = [];
-  var date;
-  //vérifier plûtot si cochée où pas peut-être jsp
-  $("input[type='checkbox']").click(function() {
-    if ($(this).checked) {
+  /*var date;
+  $(".checkbox").click(function() {
+    if (!$(this).is(':checked')) {
       //refreshes
       $(".invisibleRow").attr("style", " ");
+      console.log("checked");
     } else {
       date = $(this).next("label").html();
       $(".DateDebut").each(function () {
@@ -152,8 +220,9 @@ function hideRows() {
       //hide lines in the table that don't have the right date and are not the head line
       $("#careerTable tr:not([class='visibleRow'], [id ='tableHeader'])").attr("class", "invisibleRow");
       $(".invisibleRow").css("display", "none");
+      console.log("not checked");
     }
-  });
+  });*/
 }
 
 //string to DD/MM/YYYY date
@@ -163,9 +232,9 @@ function sToDDMMYYYY(dateString) {
   return dateObject;
 }
 
-function sortTable(n) {
+function sortTable(n, tableId) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0, compX, compY;
-  table = document.querySelector("#careerTable");
+  table = document.getElementById(tableId);
   switching = true;
   // Set the sorting direction to ascending:
   dir = "asc";
@@ -235,5 +304,5 @@ function sortTable(n) {
 function init() {
   putSpaceCaps();
   dateCheckboxes();
-  hideRows();
+  //hideRows();
 }

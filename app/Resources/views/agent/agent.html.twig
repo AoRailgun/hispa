@@ -29,7 +29,8 @@
       </div>
       <div id="career" class="tabContent">
           <!--<image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>-->
-          <p>Cliquez sur les noms des colonnes pour les trier</p>
+          <p>Cliquez sur le nom des colonnes pour les trier</p>
+          <div id="dateCheckboxes" class="checkboxes"></div>
           <table id="careerTable" class="table">
             <!--example: {{ json[21322][0]['Regime'] }} returns "Special"
             structure: {idAgent:[{row1key1:row1value1,row1key2:row1value2,...},
@@ -40,7 +41,7 @@
               {% set numCol = 0 %}
               <!--this is a test, use "id" of the selected person instead of 21322-->
               {% for keys, values in json[21322][0] %}
-                <th id="{{ keys }}" onclick="sortTable({{ numCol }});">{{ keys }}</th>
+                <th id="{{ keys }}" onclick="sortTable({{ numCol }}, 'careerTable');">{{ keys }}</th>
                 {% set numCol = numCol + 1 %}
               {% endfor %}
             </tr>
