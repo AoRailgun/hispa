@@ -26,6 +26,7 @@
       <br>
       <div id="identity" class="tabContent">
         <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:identite.png"/>
+        <!-- <div> {# rest[0] #} </div> -->
       </div>
       <div id="career" class="tabContent">
           <!--<image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>-->
@@ -40,8 +41,12 @@
             <tr id="tableHeader">
               {% set numCol = 0 %}
               <!--this is a test, use "id" of the selected person instead of 21322-->
+
+              <!--TODO: loop.index0 to numCol if error-->
+
+              
               {% for keys, values in json[21322][0] %}
-                <th id="{{ keys }}" onclick="sortTable({{ numCol }}, 'careerTable');">{{ keys }}</th>
+                <th id="{{ keys }}" onclick="sortTable({{ loop.index0 }}, 'careerTable');">{{ keys }}</th>
                 {% set numCol = numCol + 1 %}
               {% endfor %}
             </tr>

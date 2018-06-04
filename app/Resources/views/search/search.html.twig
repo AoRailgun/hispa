@@ -28,6 +28,7 @@
   					<TD>Numéro INSEE:</TD>
   					<TD><input class="text_input" type="text"></TD>
             <TD><input class="button" type="button" value="Rechercher" onclick="generateTable()"/></TD>
+            <!-- <TD><input class="button" type="button" value="Rechercher" onclick="window.location.href={{ path('search') }}"/></TD> -->
               <!-- TODO: generate table from base, allow selection
             change redirection (onclick) & type="button" to type="submit"-->
 
@@ -35,6 +36,10 @@
   			</TABLE>
   	</form>
   </div>
+
+  <!-- <div class="">
+    {#data#}
+  </div> -->
 {% endblock %}
 
 {% block javascripts %}

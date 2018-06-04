@@ -14,6 +14,33 @@ class AgentController extends Controller
     public function agentAction()
     {
 
+      // $json_url = 'http://devweb-frh.grenet.fr:8080/wshispa-test/agent?nom=&prenom=&insee=';
+      //
+      // $username = 'rakotomg';  // authentication
+      // TODO: password
+      // $password = '';  // authentication
+      //
+      // // jSON String for request
+      // //$json_string = '[your json string here]';
+      //
+      // // Initializing curl
+      // $ch = curl_init( $json_url );
+      //
+      // // Configuring curl options
+      // $options = array(
+      // CURLOPT_RETURNTRANSFER => true,
+      // CURLOPT_USERPWD	=> $username . ":" . $password,  // authentication
+      // CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
+      // //CURLOPT_POSTFIELDS => $json_string
+      // );
+      //
+      // // Setting curl options
+      // curl_setopt_array( $ch, $options );
+      //
+      // // Getting results
+      // $result = curl_exec($ch); // Getting jSON result string
+      // $rest = json_decode($result, true);
+
       $file = file_get_contents('json/test.json');
       $json = json_decode($file, true);
 
@@ -32,6 +59,7 @@ class AgentController extends Controller
         return $this->render('agent/agent.html.twig', array(
           'json' => $json,
           'image' => $images[$imageIndex],
+          //'rest' => $rest,
         ));
       }
     }
