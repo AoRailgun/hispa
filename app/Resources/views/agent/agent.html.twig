@@ -12,7 +12,9 @@
       <!--redirects to the authentication page that logs out when landing on it-->
       <input id="logout" class="button actionButton" type="button" value="Déconnexion" onclick="window.location.href={{ path('authentication') }}"/>
       <iframe id="txtArea1" style="display:none"></iframe>
-      <button id="btnExport" class="button" onclick="excelExport();">Export Excel</button>
+      <button id="btnExport" class="button" onclick="tablesToExcel(['careerTable','paychecksTable'], ['Carrière','Payes'], 'export.xlsx', 'Excel')">Export Excel</button>
+      <!-- <button id="btnExport" class="button" onclick="excelExport();">Export Excel</button> -->
+
     </div>
 
     <h1>[Nom de l'agent (?)]</h1>
@@ -31,22 +33,22 @@
       <div id="career" class="tabContent">
           <!--<image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:carriere.png"/>-->
           <p>Cliquez sur le nom des colonnes pour les trier</p>
-          <div id="dateCheckboxes" class="checkboxes"></div>
-          <table id="careerTable" class="table">
+          <div id="careerDateCheckboxes" class="checkboxList dateCheckboxes"></div>
+          <table id="careerTable" class="contentTable sortable">
             <!--example: {{ json[21322][0]['Regime'] }} returns "Special"
             structure: {idAgent:[{row1key1:row1value1,row1key2:row1value2,...},
                                  {row2key1:row2value1,row2key2:row2value2,...},...
                                 ]
                       }-->
-            <tr id="tableHeader">
+            <tr id="cTableHeader">
               {% set numCol = 0 %}
               <!--this is a test, use "id" of the selected person instead of 21322-->
 
               <!--TODO: loop.index0 to numCol if error-->
 
-              
+
               {% for keys, values in json[21322][0] %}
-                <th id="{{ keys }}" onclick="sortTable({{ loop.index0 }}, 'careerTable');">{{ keys }}</th>
+                <th id="{{ keys }}" >{{ keys }}</th>
                 {% set numCol = numCol + 1 %}
               {% endfor %}
             </tr>
@@ -65,7 +67,40 @@
         </table>
       </div>
       <div id="paychecks" class="tabContent">
-        <image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:payes.png"/>
+        <!--<image src="http://dokuwiki.grenet.fr/dokuwiki/lib/exe/fetch.php?media=frh:paye:hispa:payes.png"/>-->
+        <p>Cliquez sur le nom des colonnes pour les trier</p>
+
+        <div id="pContainer">
+          <div id="pcDateCheckboxes" class="checkboxList dateCheckboxes pContent"></div>
+          <table id="paychecksTable" class="contentTable sortable pContent">
+            <tr id="pTableHeader">
+              {% set numCol = 0 %}
+              <!--this is a test, use "id" of the selected person instead of 3558-->
+
+              <!--TODO: loop.index0 to numCol if error-->
+
+
+              {% for keys, values in testP3558[3558][0] %}
+                <th id="{{ keys }}" >{{ keys }}</th>
+                {% set numCol = numCol + 1 %}
+              {% endfor %}
+            </tr>
+
+            {% for i in 0..testP3558[3558]|length-1 %}
+              <tr id="pl{{i}}"> <!--paycheck p + letter L + number-->
+                {% for keys, values in testP3558[3558][i] %}
+                  {% if values == "null" %}
+                    <td> </td>
+                  {% else %}
+                    <td class="{{ keys }}">{{ values }}</td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+              {% endfor %}
+          </table>
+          <div id="rubriqueCheckboxes" class="checkboxList pContent"></div>
+        </div>
+
       </div>
     </div>
 
@@ -84,6 +119,7 @@ $( function() {
 </script>
 
 <script text="text/javascript" src="{{ asset('js/table_management.js')}}"></script>
+<script text="text/javascript" src="{{ asset('js/sorttable.js')}}" ></script>
 
 {% endblock %}
 
@@ -102,8 +138,4 @@ $( function() {
 
   body {background-image: url({{ asset('/assets/bgs/' ~ image)}});}
 
-{% endblock %}
-
-{% block onload %}
- onload="init();"
 {% endblock %}

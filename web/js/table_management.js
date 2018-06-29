@@ -1,59 +1,73 @@
-var checkedDates = []
+//https://stackoverflow.com/questions/29698796/how-to-convert-html-table-to-excel-with-multiple-sheet
+var tablesToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+    , tmplWorkbookXML = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
+      + '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Author>Axel Richter</Author><Created>{created}</Created></DocumentProperties>'
+      + '<Styles>'
+      + '<Style ss:ID="Currency"><NumberFormat ss:Format="Currency"></NumberFormat></Style>'
+      + '<Style ss:ID="Date"><NumberFormat ss:Format="Medium Date"></NumberFormat></Style>'
+      + '</Styles>'
+      + '{worksheets}</Workbook>'
+    , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{rows}</Table></Worksheet>'
+    , tmplCellXML = '<Cell{attributeStyleID}{attributeFormula}><Data ss:Type="{nameType}">{data}</Data></Cell>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(tables, wsnames, wbname, appname) {
+      var ctx = "";
+      var workbookXML = "";
+      var worksheetsXML = "";
+      var rowsXML = "";
 
-//maybe do 3 exports, 1 for each tab idk
-//bah dis ça marche que pour Shrome tiens
-//oh non ça chope plus les lignes filtrées
-function excelExport()
-{
-    var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
-    var textRange; var j=0;
+      for (var i = 0; i < tables.length; i++) {
+        if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
+        for (var j = 0; j < tables[i].rows.length; j++) {
+          //removes span tag that caused error on opening of file
+          if ($(tables[i].rows[j]).find('th').hasClass('sorttable_sorted')) {
+            $('.sorttable_sorted span').remove();
+          } else if ($(tables[i].rows[j]).find('th').hasClass('sorttable_sorted_reverse')) {
+            $('.sorttable_sorted_reverse span').remove();
+          }
 
-    //removes the table in case it already exists
-    //allows export multiple times in a row
-    $("#exportTable").remove();
+          //write in file if row not invisible
+          if (!($(tables[i].rows[j]).hasClass('invisibleRow'))) {
+            rowsXML += '<Row>'
+            for (var k = 0; k < tables[i].rows[j].cells.length; k++) {
+              var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
+              var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
+              var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
+              dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerHTML;
+              var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
+              dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
+              ctx = {  attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
+                     , nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
+                     , data: (dataFormula)?'':dataValue
+                     , attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
+                    };
+              rowsXML += format(tmplCellXML, ctx);
+            }
+            rowsXML += '</Row>'
+          }
 
-    //creates an hidden table based on the original
-    //this one will contain the filtered rows
-    var careerTable = document.getElementById('careerTable');
-    var exportTable = careerTable.cloneNode(true);
-    exportTable.id = 'exportTable';
-    document.body.appendChild(exportTable);
-    $('#exportTable').css("display","none");
-    $("#exportTable tr:not([class='visibleRow'], [id ='tableHeader'])").remove();
+        }
+        ctx = {rows: rowsXML, nameWS: wsnames[i] || 'Sheet' + i};
+        worksheetsXML += format(tmplWorksheetXML, ctx);
+        rowsXML = "";
+      }
 
-    tab = document.getElementById('exportTable'); // id of table
+      ctx = {created: (new Date()).getTime(), worksheets: worksheetsXML};
+      workbookXML = format(tmplWorkbookXML, ctx);
 
-    for(j = 0 ; j < tab.rows.length ; j++)
-    {
-        tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
-        //tab_text=tab_text+"</tr>";
+
+
+      var link = document.createElement("A");
+      link.href = uri + base64(workbookXML);
+      link.download = wbname || 'Workbook.xls';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
-
-    tab_text=tab_text+"</table>";
-    tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
-    tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
-    tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
-
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE ");
-
-    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
-    {
-        txtArea1.document.open("txt/html","replace");
-        txtArea1.document.write(tab_text);
-        txtArea1.document.close();
-        txtArea1.focus();
-        sa=txtArea1.document.execCommand("SaveAs",true,"export.xls");
-        return (sa);
-    }
-    else                 //other browser not tested on IE 11
-        //sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
-        var link = document.createElement("a");
-        //maybe change name depending on variables idk
-        link.download = "export.xls";
-        link.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(tab_text);
-        link.click();
-}
+  })();
 
 //puts a space before each capital letter
 function putSpaceCaps() {
@@ -61,7 +75,7 @@ function putSpaceCaps() {
     var beginText;
     var endText;
 
-    $('.table th').each(function() {
+    $('.contentTable th').each(function() {
       text = $(this).text();
       for (i=1; i<$(this).text().length; i++) {
         if (text[i] == text[i].toUpperCase()) {
@@ -76,87 +90,95 @@ function putSpaceCaps() {
     });
 }
 
-//do the tri by date with the cases à cocher and by order of the column et tout là
-//see SIMILE
-
 //generates checkboxes for each year
-//va ptetre falloir changer pour quand y aura l'onglet des payes et tout là
 function dateCheckboxes() {
-  var dates = [];
+  var careerDates = [];
+  var payDates = [];
 
   $(".DateDebut, .DateFin").each(function () {
-    dates.push($(this).text().substr(6));
+    careerDates.push($(this).text().substr(6));
   });
 
-  let uniqueDates = [...new Set(dates)];
-  uniqueDates.sort();
+  $(".AnneePaye").each(function() {
 
-  for (i=0; i<uniqueDates.length; i++) {
+    payDates.push($(this).text());
+  });
+
+  let uniqueCareerDates = [...new Set(careerDates)];
+  uniqueCareerDates.sort();
+
+  let uniquePayDates = [...new Set(payDates)];
+  uniquePayDates.sort();
+
+  for (i=0; i<uniqueCareerDates.length; i++) {
     var checkbox = document.createElement('input');
     checkbox.type = "checkbox";
-    checkbox.name = uniqueDates[i];
-    checkbox.value = uniqueDates[i];
-    checkbox.id = "cb" + uniqueDates[i];
-    $(checkbox).attr("onclick", "hideRows()");
+    checkbox.name = uniqueCareerDates[i];
+    checkbox.value = uniqueCareerDates[i];
+    checkbox.id = "cb" + uniqueCareerDates[i];
+    $(checkbox).attr("onclick", "hideCareerRows()");
     $(checkbox).attr('class','checkbox');
     $(checkbox).attr('name', 'filterStatus');
 
     var label = document.createElement('label')
-    label.htmlFor = "cb" + uniqueDates[i];
-    label.appendChild(document.createTextNode(uniqueDates[i]));
+    label.htmlFor = "cb" + uniqueCareerDates[i];
+    label.appendChild(document.createTextNode(uniqueCareerDates[i]));
 
-    $("#dateCheckboxes").append(checkbox);
-    $("#dateCheckboxes").append(label);
+    $("#careerDateCheckboxes").append(checkbox);
+    $("#careerDateCheckboxes").append(label);
+  }
+
+  for (i=0; i<uniquePayDates.length; i++) {
+    var checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.name = uniquePayDates[i];
+    checkbox.value = uniquePayDates[i];
+    checkbox.id = "cb" + uniquePayDates[i];
+    $(checkbox).attr("onclick", "hidePayRows()");
+    $(checkbox).attr('class','checkbox dateCheckbox');
+    $(checkbox).attr('name', 'filterStatus');
+
+    var label = document.createElement('label')
+    label.htmlFor = "cb" + uniquePayDates[i];
+    label.appendChild(document.createTextNode(uniquePayDates[i]));
+
+    $("#pcDateCheckboxes").append(checkbox);
+    $("#pcDateCheckboxes").append(label);
+    $("#pcDateCheckboxes").append('<br/>');
   }
 }
 
-//sort by date
-//va peut être falloir filtrer en fonction de si on veut les datesdebut ou datesfin
-//c'est pas cooool ça marche pas quand on décoche lààààààà
-// TODO:
-/*genre là faut pouvoir faire en sorte de faire réapparaître les trucs quand ça se décoche
-et aussi de pouvoir appliquer plusieurs filtres
-genre quand y a deux cases de cochées ça affiche les résultats correspondant
-mais genre ça a l'air chaud déjà je galère pas mal là
-va falloir stocker les label de toutes les cases cochée
-puis parcourir l'array de labels pour voir si y a pas des lignes qui correspondent*/
-//ou ptetre faut faire deux fonctions séparées selon le cas jsp
-function hideRows() {
-  /*if (case cochée) {
-    ajouter la date au tableau de dates cochées
-  } else { //case décochée
-    rendre toutes les lignes qui contiennent la date invisible
-    retirer la date du dit tableau
+function rubriqueCheckboxes() {
+  var rubriques = [];
+
+  $(".Rubrique").each(function () {
+    rubriques.push($(this).text());
+  });
+
+  let uniqueRubriques = [...new Set(rubriques)];
+  uniqueRubriques.sort();
+
+  for (i=0; i<uniqueRubriques.length; i++) {
+    var checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.name = uniqueRubriques[i];
+    checkbox.value = uniqueRubriques[i];
+    checkbox.id = "cb" + uniqueRubriques[i];
+    $(checkbox).attr("onclick", "hidePayRows()");
+    $(checkbox).attr('class','checkbox rubriqueCheckbox');
+    $(checkbox).attr('name', 'filterStatus');
+
+    var label = document.createElement('label')
+    label.htmlFor = "cb" + uniqueRubriques[i];
+    label.appendChild(document.createTextNode(uniqueRubriques[i]));
+
+    $("#rubriqueCheckboxes").append(checkbox);
+    $("#rubriqueCheckboxes").append(label);
+    $('#rubriqueCheckboxes').append('<br/>');
   }
+}
 
-  if (tableau pas vide) {
-    for (chaque date du tableau) {
-      si la ligne contient la date à index i elle apparait
-    }
-  } else {
-    toutes les lignes sont visibles
-  }*/
-
-  /*var date;
-  $(".checkbox").click(function() {
-    date = $(this).next("label").html();
-    if ($(this).is(':checked')) {
-      checkedDates.push(date);
-    } else {
-      $(".DateDebut, .DateFin").each(function () {
-        if ($(this).text().substr(6) == date) {
-          $(this)
-        }
-        for (var i = 0; i < checkedDates.length; i++) {
-          if (checkedDates[i] == $(this).text().substr(6)) {
-            checkedDates.splice(i,1);
-          }
-        }
-      });
-    }
-
-    if
-  });*/
+function hideCareerRows() {
   $('#careerTable tr').each(function() {
     $(this).removeAttr('class');
   });
@@ -173,17 +195,17 @@ function hideRows() {
     } else { // otherwise, hide everything...
         $("#careerTable tbody tr").hide();
 
-        $("#careerTable tr:not([id='tableHeader'])").each(function () {
+        $("#careerTable tr:not([id='cTableHeader'])").each(function () {
             var show = false;
             $(this).removeAttr('class');
             var row = $(this);
-            if (!($(row).attr('id')=='tableHeader')) {
+            if (!($(row).attr('id')=='cTableHeader')) {
               dates.forEach(function (date) {
-                  if (($(row).find('.DateFin').html().substr(6) == date) || ($(row).find('.DateDebut').html().substr(6) == date)) {
-                     show = true;
-                  } else {
-                    $(row).attr('class', 'invisibleRow');
-                  }
+                if (($(row).find('.DateFin').html().substr(6) == date) || ($(row).find('.DateDebut').html().substr(6) == date)) {
+                   show = true;
+                } else {
+                  $(row).attr('class', 'invisibleRow');
+                }
               });
             }
             if (show) {
@@ -191,118 +213,79 @@ function hideRows() {
                $(row).attr('class','visibleRow');
             }
         });
-        $('#tableHeader').show();
+        $('#cTableHeader').show();
     }
-});
-
-
-//ça ça "marche"
-  //var matchingLines = [];
-  /*var date;
-  $(".checkbox").click(function() {
-    if (!$(this).is(':checked')) {
-      //refreshes
-      $(".invisibleRow").attr("style", " ");
-      console.log("checked");
-    } else {
-      date = $(this).next("label").html();
-      $(".DateDebut").each(function () {
-        if ($(this).text().substr(6) == date) {
-          $(this).parent().attr("class", "visibleRow");
-        }
-      });
-      $(".DateFin").each(function () {
-        if ($(this).text().substr(6) == date) {
-          $(this).parent().attr("class", "visibleRow");
-        }
-      });
-
-      //hide lines in the table that don't have the right date and are not the head line
-      $("#careerTable tr:not([class='visibleRow'], [id ='tableHeader'])").attr("class", "invisibleRow");
-      $(".invisibleRow").css("display", "none");
-      console.log("not checked");
-    }
-  });*/
+  });
 }
 
-//string to DD/MM/YYYY date
-function sToDDMMYYYY(dateString) {
-  var dateParts = dateString.split("/");
-  var dateObject = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]); // month is 0-based
-  return dateObject;
+function hidePayRows() {
+  $('#paychecksTable tr').each(function() {
+    $(this).removeAttr('class');
+  });
+
+  $("input[name='filterStatus']").change(function () {
+    var dates = [];
+    var rubriques = [];
+
+    $("input[name='filterStatus']").each(function () {
+        if ($(this).is(":checked") && $(this).hasClass('dateCheckbox')) {
+          dates.push($(this).next("label").html());
+        } else if ($(this).is(":checked") && $(this).hasClass('rubriqueCheckbox')) {
+          rubriques.push($(this).next("label").html());
+        }
+    });
+
+    if (rubriques == "" && dates == "") { // if no filters selected, show all items
+        $("#paychecksTable tbody tr").show();
+    } else { // otherwise, hide everything...
+        $("#paychecksTable tbody tr").hide();
+
+        $("#paychecksTable tr:not([id='pTableHeader'])").each(function () {
+            var show = false;
+            $(this).removeAttr('class');
+            var row = $(this);
+            if (!($(row).attr('id')=='pTableHeader')) {
+              if (dates == "") {
+                rubriques.forEach(function (rubrique) {
+                  if ($(row).find('.Rubrique').html() == rubrique) {
+                     show = true;
+                  } else {
+                    $(row).attr('class', 'invisibleRow');
+                  }
+                });
+              } else if (rubriques == "") {
+                dates.forEach(function (date) {
+                  if ($(row).find('.AnneePaye').html() == date) {
+                     show = true;
+                  } else {
+                    $(row).attr('class', 'invisibleRow');
+                  }
+                });
+              } else if (rubriques != "" && dates != "") {
+                rubriques.forEach(function (rubrique) {
+                  dates.forEach(function (date) {
+                    if ($(row).find('.Rubrique').html() == rubrique && $(row).find('.AnneePaye').html() == date) {
+                       show = true;
+                    } else {
+                      $(row).attr('class', 'invisibleRow');
+                    }
+                  });
+                });
+              }
+            }
+            if (show) {
+               row.show();
+               $(row).attr('class','visibleRow');
+            }
+        });
+        $('#pTableHeader').show();
+    }
+  });
 }
 
-function sortTable(n, tableId) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0, compX, compY;
-  table = document.getElementById(tableId);
-  switching = true;
-  // Set the sorting direction to ascending:
-  dir = "asc";
-  /* Make a loop that will continue until
-  no switching has been done: */
-  while (switching) {
-    // Start by saying: no switching is done:
-    switching = false;
-    rows = table.getElementsByTagName("tr");
-    /* Loop through all table rows (except the
-    first, which contains table headers): */
-    for (i = 1; i < (rows.length - 1); i++) {
-      // Start by saying there should be no switching:
-      shouldSwitch = false;
-      /* Get the two elements you want to compare,
-      one from current row and one from the next: */
-      x = rows[i].getElementsByTagName("td")[n];
-      y = rows[i + 1].getElementsByTagName("td")[n];
-
-      //checks if it's a date or not
-      if (($(x).html()[2]=='/') && ($(x).html()[5]=='/')) {
-        compX = sToDDMMYYYY($(x).html());
-        compY = sToDDMMYYYY($(y).html());
-      } else {
-        compX = $(x).html().toLowerCase()
-        compY = $(y).html().toLowerCase()
-      }
-
-      if (dir == "asc") {
-        // TODO: sort dates y > m > d
-        if (compX > compY) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (compX < compY) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-      /* Check if the two rows should switch place,
-      based on the direction, asc or desc: */
-
-    }
-    if (shouldSwitch) {
-      /* If a switch has been marked, make the switch
-      and mark that a switch has been done: */
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      // Each time a switch is done, increase this count by 1:
-      switchcount ++;
-    } else {
-      /* If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again. */
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
-}
-
-
-
-function init() {
+//used in sorttable.js's init function
+function initTM() {
   putSpaceCaps();
   dateCheckboxes();
-  //hideRows();
+  rubriqueCheckboxes();
 }

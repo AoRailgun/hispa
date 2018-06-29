@@ -74,55 +74,60 @@ ul#horizontal_menu a.button, .tab_content {
   right: 10px;
 }
 
-#careerTable {
+.contentTable {
   border-collapse: collapse;
 }
 
-#careerTable th {
+.contentTable th {
   background-color: #609dff;
   color: white;
   cursor: pointer;
 }
 
-#careerTable td, #careerTable th {
+.contentTable td, .contentTable th {
     border: 1px solid #929caa;
     padding: 8px;
 }
 
-#careerTable tr:nth-child(even) {
+.contentTable tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-#careerTable tr:nth-child(odd) {
+.contentTable tr:nth-child(odd) {
   background-color: #adccff;
 }
 
-#careerTable tr:hover {
+.contentTable tr:hover {
   background-color: #ddd;
 }
 
-#careerTable td:hover {
+.contentTable td:hover {
   background-color: #a8a8a8;
 }
 
-#career {
+#career{
   display: inline-block;
 }
 
-#overlay {
-    position: fixed;
-    display: none;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 2;
-    cursor: pointer;
+.checkboxList {
+  display: inline-block;
 }
 
-.checkboxes {
-  display: inline-block;
+#pcDateCheckboxes {
+  width: 5%;
+}
+
+#rubriqueCheckboxes {
+  width: 30%;
+  text-align: left;
+}
+
+#pContainer {
+  display: flex; /* displays flex-items (children) inline */
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.pContent {
+  flex: 0 80% 25%; /* doesn't grow nor shrink, initial width set to 25% of the parent's */
 }

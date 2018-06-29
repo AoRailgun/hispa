@@ -44,6 +44,8 @@ class AgentController extends Controller
       $file = file_get_contents('json/test.json');
       $json = json_decode($file, true);
 
+      $testP3558 = json_decode(file_get_contents('json/paye_3558.json'), true);
+
       //loads a random background
       $images = scandir('assets/bgs');
       $images = array_diff($images, array('.','..'));
@@ -60,6 +62,7 @@ class AgentController extends Controller
           'json' => $json,
           'image' => $images[$imageIndex],
           //'rest' => $rest,
+          'testP3558' => $testP3558,
         ));
       }
     }
